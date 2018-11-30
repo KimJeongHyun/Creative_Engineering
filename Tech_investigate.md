@@ -59,6 +59,55 @@
          1. 디스크 구조로 디자인된 인메모리 
       - 실시간성
          1. Producer Thread에서 생성된 메세지는 즉시 Consumer Thread에서 처리
+
+ * Apache Kafka의 체계
+ 
+      <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_NewArchi.png">
+      
+    1. 기존 (트리||피라미드)와 유사했던 구조와 달리 하나의 플랫폼에서 여러 기능을 지원하는 방식으로 변화
+    2. Kafka Platform이 제공하는 표준 포맷으로 통일되어 데이터 전송에 용이
+    3. 변경 사항 발생시 Data store backend 관리 및 format, 기타 Application 개발이 필요했으나 이제 Platform에서 데이터를 가져다 쓰기만 하면 됨
+ 
+ * Apache Kafka의 활용
+    1. 연관 검색
+    2. 인기도, 동시성, 감정 분석 기반 추천 시스템
+    3. 대중 광고 전달
+    4. 스팸, 미허가 데이터 수집에 대한 인터넷 Application 보안
+    5. 어플리케이션 통계 수집
+    6. 인터넷 유저의 웹 사이트 활동 기록 추적
+    7. 메세지 처리
+    
+ * Apache Kafka의 시나리오와 동작 원리
+ 
+      <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_Scenario.jpg" width="40%">
+      <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_Scenario2.png" width="60%">
+      
+      - 위 첨부사진은 빅데이터 집계 및 분석 시나리오에서 Kafka의 작용을 표현함.
+      - Kafka는 Zookeeper[^4]에 의해 관리되며, Producer[^5], Broker[^6], Consumer[^7]로 구성됨
+        1. 시스템에서 메세지 발생
+        2. Producer가 메세지를 Broker에게 전달
+        3. Broker가 Consumer에게 메세지를 분산처리
+        4. Consumer가 분산된 데이터를 디스크에 저장함
+      - 데이터 저장소 'Topic'과 'Partition' (심화)
+        1. 내용 설명....
+
+* Apache Kafka의 성능
+  - Zero-Copy 기법
+  
+     <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_ZeroCopy.gif" width="60%">  
+  
+    1. 내용 설명...
+  - 성능
+  
+     <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_ProducerPerformance.png" width="60%">
+     <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_ConsumerPerformance.png" width="60%">
+     
+  
+    
+         
+         
+         
+         
          
          
 [^1]: 서버의 가상화 기능을 사용해 접속된 서버의 대수를 늘려 처리 능력을 향상시키는 기법. 하나의 케이스 내에서 가상적으로 복수 서버를 구축해 Scale Out과 동등한 효과 제공이 가능하며 이것을 Scale Within 또는 Virtual Scale Out 등으로 부르기도 한다.
@@ -67,3 +116,10 @@
 
 [^3]: 장애 허용 시스템, 또는 결함 감내 시스템. 시스템에서 결함 또는 고장이 발생해도 정상적 혹은 부분적으로 기능을 수행할 수 있는 시스템.
 
+[^4]: Apache Zookeeper. 분산 코디네이터로 디렉토리 구조의 노드에 데이터를 저장할 수 있다. 노드별 특성, Watcher 기능 등을 사용하여 다양한 시나리오를 구성한다.
+
+[^5]: Publisher. 데이터 단위를 전송하는 부분. 
+
+[^6]: 데이터를 받아 분산처리하는 부분.
+
+[^7]: Subscriber. 데이터 저장소 'Topic'에서 데이터를 가져가는 부분.
