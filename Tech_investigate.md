@@ -89,10 +89,51 @@
         3. Broker가 Consumer에게 메세지를 분산처리
         4. Consumer가 분산된 데이터를 디스크에 저장함
       - 데이터 저장소 'Topic'과 'Partition' (심화)
-        1. 내용 설명....
+        1. Topics
+           - Kafka는 Topics 라는 파이프 라인에 데이터 레코드 스트림을 저장함
+           - 게시하고자 하는 레코드에 대한 범주 또는 피드의 이름
+           - Topics의 구성 ↓
+           <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_TopicWithPartition.png" width="60%">  
+           
+           - Topics는 쉽게 말해 Kafka Cluster에 들어온 데이터가 분류된 것임.
+           - Topic들은 여러 노드에 분산된 Partition에 분산되어 저장됨.
+        2. Partition
+           - Partition은 Topics 파이프 라인에서 데이터를 분산시키기 위한 구조
+           - Partition의 구성 ↓
+           <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_Partition.png" width="60%">  
+           
+           - Partition은 레코드가 순서대로 쌓이며, Consumer가 어디까지 메세지를 읽었는지 offset이 저장됨. 이 때 로그의 위치정보만으로 메세지를 읽을 수 있어 매우 가벼움
+        3. Topics' Partition's distribution
+        
+           <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_Variation.png" width="60%">
+           - 위의 사진은 Kafka 분산을 설명하는 사진임.
+           - Kafka는 이들 중 하나의 Partition으로 메세지를 전송하는 데, 이 때 라운드로빈 등의 알려진 알고리즘이나 직접 구현된 알고리즘을 사용할 수 있음. 따라서, 메세지 순서가 중요한 서비스의 경우 대비책이 필요함
+           
+        4. Topics' Partition's Replication 
+        
+           <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_PartitionCopy.png" width="60%">
+           - 위의 사진은 Kafka Partition에서 복제의 수행을 설명하는 사진임.
+           - 이것은 Master-Slave 방식을 통해 복제됨.
+           - P0-L이 리더가 되어 P0-R1, P0-R2가 팔로워 역할을 수행
+           - 메세지의 R/W는 P0-L만 수행하며 하나의 노드에 문제가 생기더라도 타 노드의 파티션을 통해 메세지를 주고 받을 수 있음.
+        
+        5. 평가
+           - Kafka는 Topics 파이프라인 구조를 이용해 데이터의 구분이 용이
+           - Partition의 분산, 복제 운용을 통해 전송 속도의 개선 뿐만 아니라 장애가 발생했을 때의 대책까지 마련되어 있음.
 
 * Apache Kafka의 성능
-  - Zero-Copy 기법
+ - Zero Copy 기법
+     - Zero Copy는 커널 영역에서 파일 데이터를 읽고 바로 소켓에 데이터를 담아 전달하는 기법으로, 평범하게 정적파일을 전송할 때 커널~유저 영역을 넘나들 때마다 매번 복사가 일어나 불필요하게 CPU와 메모리를 점유하는 것을 해결하는 방법임.
+     - Kafka는 파일 시스템의 메세지를 네트워크를 통해 consumer로 전송할 때 Zero Copy 기법을 이용해 데이터 전송 성능을 향상시켰음.
+     - 평범한 파일 데이터 전달 방식 ↓
+     <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_StdTransfer.gif" width="60%">  
+     
+     - Zero Copy의 전달 방식 ↓
+     <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_ZeroCopy.gif" width="60%">  
+  
+
+  - 성능
+     - 이하 첨부된 사진은 기존 메시징 시스템과 비교한 Producer, Consumer의 성능 차이를 비교한 그래프로 파랑, 보라색 선이 기존 시스템의 성능이며 batch 수에 따라 Kafka의 성능은 초록색, 빨간색으로 구분되어 있습니다.
   
      <img src="https://github.com/KimJeongHyun/Creative_Engineering/blob/master/Tech_investigate_Resource/Kafka_ZeroCopy.gif" width="60%">  
   
